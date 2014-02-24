@@ -3,15 +3,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 
 struct points
 {
-	float x;
-	float y;
-	float z;
+	int x;
+	int y;
+	int z;
 
 };
+
+/*checking entered data and return 0 if type doesn't match requirements*/
+int Type_checking(int retCode, int val);
+
+/*input coordinates of space points into list of points return 0 if some data doesn't match requirements*/
+int Input(struct points* mas_of_points, int num);
+
+/*checking if string pstr involves only digits*/
+int Is_digit(char* pstr);
 
 /*sorted array of space points by ascending z coordinate */
 void Sort_points(struct points *p, int n);
@@ -20,42 +30,35 @@ void Sort_points(struct points *p, int n);
 double Get_distance(struct points *a, struct points *b);
 
 
-int main(int argc, _TCHAR* argv[])
+int main( )
 {
-	unsigned int num;
-	printf("Enter how many space points do you want to create: ");
-	int retCode = scanf("%u", &num);
-	if (retCode == 0)
+	int num;
+	printf("Enter integer number of space points that you want to create: ");
+	int retCode = scanf("%i", &num);
+
+	if (0 == Type_checking(retCode, num))
 	{
-		printf("Type mismatch. Next time please enter integer number of points. \n");
 		return 0;
 	}
 	
 	struct points*  mas_of_points = (points*)malloc(num * sizeof(points));
 
-	printf("Enter coordinates of space points in the form of x y z\n");
-	int i;
-	for (i = 0; i < num; i++)
+	printf("Enter integer coordinates of space points separated by comma \n (in the form of x,y,z): \n");
+	retCode = Input(mas_of_points, num);
+	if (0 == retCode)
 	{
-		printf("coordinate of %i space point:   ", i + 1);
-		retCode = scanf("%f %f %f", &mas_of_points[i].x, &mas_of_points[i].y, &mas_of_points[i].z);
-		if (retCode == 0)
-		{
-			printf("Type mismatch. Next time please enter decimal coordinate. \n");
-			free(mas_of_points);
-			return 0;
-		}
-
+		return 0;
 	}
+	
 
 	printf(" \n Coordinate of points sorted by ascending z coordinate: \n");
 	Sort_points(mas_of_points, num);
-	for (i = 0; i < num; i++)
-		printf("%i point: %.2f \t%.2f \t%.2f \n", i + 1, mas_of_points[i].x, mas_of_points[i].y, mas_of_points[i].z);
+	for (int i = 0; i < num; i++)
+		printf("%i point: %i \t%i \t%i \n", i + 1, mas_of_points[i].x, mas_of_points[i].y, mas_of_points[i].z);
 
 	double space = Get_distance(mas_of_points, mas_of_points + 1);
 	int p1 = 0, p2 = 1;
-	for (i = 0; i < num - 1; i++)
+	for (int i = 0; i < num - 1; i++)
 	{
 
 		for (int j = i + 1; j<num; j++)
@@ -73,18 +76,91 @@ int main(int argc, _TCHAR* argv[])
 	return 0;
 }
 
-
-void Sort_points(struct points *p, int n)
+int Type_checking(int retCode, int val)
 {
-	points a;
-	for (int i = 0; i < n; i++)
-	for (int j = i + 1; j < n; j++)
+	if (0 == retCode)
+	{
+		printf("Type mismatch. Please next time check if you enter integer number. \n");
+		return 0;
+	}
+	if (val < 0)
+	{
+		printf("The value can not be negative or null.\n");
+		return 0;
+	}
+	return 1;
+}
+
+int Input(struct points* mas_of_points, int num)
+{
+	char temp[20];
+	char* token;
+	for (int i = 0; i < num; i++)
+	{
+		printf("coordinate of %i space point:   ", i + 1);
+		scanf("%s", &temp);
+
+		int coord_count = 0;
+		int temp_num[3];
+		token = strtok(temp, ",");
+
+		while (token != NULL && coord_count < 3)
+		{
+			if (0 == Is_digit(token))
+			{
+				printf("Type mismatch. Next time please check if you entered number \n");
+				return 0;
+			}
+			temp_num[coord_count] = atoi(token);
+			token = strtok(NULL, ",");
+			coord_count++;
+		}
+		if (coord_count != num)
+		{
+			printf("Warning! Not all coordinates inputed . \n");
+		}
+		mas_of_points[i].x = temp_num[0];
+		mas_of_points[i].y = temp_num[1];
+		mas_of_points[i].z = temp_num[2];
+
+		
+	}
+	return 1;
+}
+
+int Is_digit(char* pstr)
+{
+	char* psubstr;
+	char key[] = "0123456789";
+	psubstr = strpbrk(pstr, key);
+	if (psubstr == NULL)
+	{
+		return 0;
+	}
+	int shift = 0;
+	while (psubstr != NULL)
+	{
+		if (psubstr != (pstr + shift))
+		{
+			return 0;
+		}
+		psubstr = strpbrk(psubstr + 1, key);
+		shift++;
+	}
+	return 1;
+}
+
+void Sort_points(struct points *p, int num)
+{
+	points temp;
+	for (int i = 0; i < num; i++)
+	for (int j = i + 1; j < num; j++)
 	{
 		if ((p + i)->z > (p + j)->z)
 		{
-			a = *(p + j);
+			temp = *(p + j);
 			*(p + j) = *(p + i);
-			*(p + i) = a;
+			*(p + i) = temp;
 		}
 	}
 }
@@ -92,6 +168,13 @@ void Sort_points(struct points *p, int n)
 
 double Get_distance(struct points *a, struct points *b)
 {
-	return sqrt((a->x - b->x) * (a->x - b->x) + (a->y - b->y) * (a->y - b->y) + (a->z - b->z) * (a->z - b->z));
+	return sqrt((double)(a->x - b->x) * (a->x - b->x) + (a->y - b->y) * (a->y - b->y) + (a->z - b->z) * (a->z - b->z));
 }
 
+
+
+
+	
+	
+
+	
