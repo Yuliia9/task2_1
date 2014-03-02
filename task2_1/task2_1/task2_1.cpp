@@ -36,7 +36,7 @@ int main()
 		fflush(stdin); // Flush the input buffer
 	}while (Type_checking(retCode, (int) num) == ERROR);
 		
-
+	printf("List will consist of %u space points", num);
 	struct point*  points = (point*)malloc(num * sizeof(point));
 	if (points == NULL)
 	{
@@ -44,11 +44,11 @@ int main()
 		return (int)ERROR;
 	}
 
-	printf("Enter coordinates of space points separated by comma \n (in the form of x,y,z): \n");
 
 	retCode = Input(points, num);
 	if (retCode == ERROR)
 	{
+		free(points);
 		return (int)ERROR;
 	}
 
@@ -58,6 +58,7 @@ int main()
 	if (retCode == ERROR)
 	{
 		printf("The problem occur while trying to sort points.\n");
+		free(points);
 		return (int)ERROR;
 	}
 
@@ -65,6 +66,7 @@ int main()
 	if (retCode == ERROR)
 	{
 		printf("The problem occur while trying to display points.\n");
+		free(points);
 		return (int)ERROR;
 	}
 
@@ -72,6 +74,7 @@ int main()
 	if (retCode == ERROR)
 	{
 		printf("The problem occur while trying to display smallest distance.\n");
+		free(points);
 		return (int)ERROR;
 	}
 	
@@ -82,14 +85,14 @@ int main()
 #endif
 void Interface()
 {
-	printf("Hi! Introduce to your attention a program that creates for you ");
-	printf("\n a desire length list of space points,");
-	printf("\n sorts the points by ascending z coordinate ");
-	printf("\nand estimates for you the smallest distance between points;)\n");
+	printf("Hi! Introduce to your attention a program that creates for you \n");
+	printf("a desire length list of space points, \n");
+	printf("sorts the points by ascending z coordinate \n");
+	printf("and estimates for you the smallest distance between points;)\n");
 	printf("Program made by Yuliia Lyubchik.\n");
 }
 
-unsigned char Type_checking(int retCode, int val)
+unsigned char Type_checking(unsigned char retCode, int val)
 {
 	if (retCode == ERROR)
 	{
@@ -98,7 +101,7 @@ unsigned char Type_checking(int retCode, int val)
 	}
 	if (val <= 0)
 	{
-		printf("The value can not be negative or null.\n");
+		printf("The value can not be negative or zero.\n");
 		return ERROR;
 	}
 	return SUCCESS;
@@ -108,9 +111,10 @@ unsigned char Input(struct point* points, unsigned int num)
 {
 	if (points == NULL)
 	{
+		printf("Error occurs trying to get access to memory.\n");
 		return ERROR;
 	}
-
+	printf("Enter coordinates of space points separated by comma \n(in the form of x,y,z): \n");
 	char temp[20];
 	char* token;
 	unsigned int i, coord_count = 0;
@@ -136,7 +140,7 @@ unsigned char Input(struct point* points, unsigned int num)
 		}
 		if (coord_count != LEN)
 		{
-			printf("Coordinates wasn't inputed . \n");
+			printf("Coordinates weren't inputed . \n");
 			--i;
 			continue;
 		}
@@ -150,6 +154,10 @@ unsigned char Input(struct point* points, unsigned int num)
 
 unsigned char Is_digit(const char* pstr)
 {
+	if (pstr == NULL)
+	{
+		return ERROR;
+	}
 	unsigned int i;
 	unsigned char krapka = 0;
 	for (i = 0; i < strlen(pstr); ++i)

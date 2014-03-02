@@ -6,16 +6,16 @@ struct point
 	float z;
 
 };
-/*displays some information about program*/
+/*displays some general information about program*/
 void Interface();
 
 /*checking entered data and return 0 if type doesn't match requirements*/
-unsigned char Type_checking(int retCode, int val);
+unsigned char Type_checking(unsigned char retCode, int val);
 
-/*input coordinates of space points into list of points return 0 if some data doesn't match requirements*/
+/*input coordinates of space points into list of points*/
 unsigned char Input(struct point* points, unsigned int num);
 
-/*output list of points on display*/
+/*displays list of points on display*/
 unsigned char Output(const struct point* points, unsigned int num);
 
 /*checking if string pstr involves only digits*/
