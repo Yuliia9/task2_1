@@ -1,21 +1,34 @@
+/**
+* @file		task2_1.cpp
+* @brief	Program creates list of space points, sort points by ascending z coordinate
+			and estimates the smallest distance between points
+*
+* Copyright 2014 by Yuliia Lyubchik
+*
+* This software is the confidential and proprietary information
+* of Yuliia Lyubchik. ("Confidential Information").  You
+* shall not disclose such Confidential Information and shall use
+* it only with permission from Yuliia.
+*/
+
+
 
 #include "stdafx.h"
+#include "task2_1.h" /*defines data types and prototypes of used in this file functions*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "task2_1.h"
+
 
 const unsigned char ERROR = 0;
 const unsigned char SUCCESS = 1;
 const unsigned char MAIN_SUCCESS = 0;
 
-/*the number of coordinates in point (number of fields in struct point)*/
-const int LEN = 3;
+
+const int LEN = 3; /*the number of coordinates in point (number of fields in struct point)*/
 
 //#define UNITTEST
-
-
 
 #ifdef UNITTEST
 
@@ -24,19 +37,25 @@ int main()
 	Test();
 }
 #else
+
+
 int main()
 {
 	Interface();
+
 	unsigned int num;
 	unsigned char retCode;
+
 	do
 	{
 		printf("Enter integer number of space points that you want to create: ");
 		retCode = scanf("%u", &num);
 		fflush(stdin); // Flush the input buffer
+
 	}while (Type_checking(retCode, (int) num) == ERROR);
 		
-	printf("List will consist of %u space points", num);
+	printf("List will consist of %u space point(s).\n", num);
+
 	struct point*  points = (point*)malloc(num * sizeof(point));
 	if (points == NULL)
 	{
@@ -53,7 +72,7 @@ int main()
 	}
 
 
-	printf(" \n Coordinate of points sorted by ascending z coordinate: \n");
+	printf(" \nCoordinate of points sorted by ascending z coordinate: \n");
 	retCode = Sort_points(points, num);
 	if (retCode == ERROR)
 	{
@@ -61,6 +80,7 @@ int main()
 		free(points);
 		return (int)ERROR;
 	}
+
 
 	retCode = Output(points, num);
 	if (retCode == ERROR)
@@ -83,13 +103,18 @@ int main()
 	return (int)MAIN_SUCCESS;
 }
 #endif
+
+
+
 void Interface()
 {
+	printf("---------------------------------------------------------------\n");
 	printf("Hi! Introduce to your attention a program that creates for you \n");
-	printf("a desire length list of space points, \n");
+	printf("a desired length list of space points, \n");
 	printf("sorts the points by ascending z coordinate \n");
 	printf("and estimates for you the smallest distance between points;)\n");
 	printf("Program made by Yuliia Lyubchik.\n");
+	printf("---------------------------------------------------------------\n");
 }
 
 unsigned char Type_checking(unsigned char retCode, int val)
@@ -107,6 +132,9 @@ unsigned char Type_checking(unsigned char retCode, int val)
 	return SUCCESS;
 }
 
+
+
+
 unsigned char Input(struct point* points, unsigned int num)
 {
 	if (points == NULL)
@@ -114,7 +142,9 @@ unsigned char Input(struct point* points, unsigned int num)
 		printf("Error occurs trying to get access to memory.\n");
 		return ERROR;
 	}
+
 	printf("Enter coordinates of space points separated by comma \n(in the form of x,y,z): \n");
+
 	char temp[20];
 	char* token;
 	unsigned int i, coord_count = 0;
@@ -129,7 +159,7 @@ unsigned char Input(struct point* points, unsigned int num)
 		{
 			if (Is_digit(token) == ERROR)
 			{
-				printf("Type mismatch. Next time please check if you entered three float or integer numbers \n");
+				printf("Type mismatch.\n Next time please check if you entered three float or integer numbers \n");
 				fflush(stdin);
 				break;
 			}
@@ -150,6 +180,8 @@ unsigned char Input(struct point* points, unsigned int num)
 	}
 	return SUCCESS;
 }
+
+
 
 
 unsigned char Is_digit(const char* pstr)
@@ -189,6 +221,8 @@ unsigned char Is_digit(const char* pstr)
 	return SUCCESS;
 }
 
+
+
 unsigned char Output(const struct point* points, unsigned int num)
 {
 	if (points == NULL)
@@ -200,6 +234,9 @@ unsigned char Output(const struct point* points, unsigned int num)
 		printf("%i point: %f \t%f \t%f \n", i + 1, points[i].x, points[i].y, points[i].z);
 	return SUCCESS;
 }
+
+
+
 
 unsigned char Sort_points(struct point *p, unsigned int num)
 {
@@ -221,6 +258,10 @@ unsigned char Sort_points(struct point *p, unsigned int num)
 	}
 	return SUCCESS;
 }
+
+
+
+
 unsigned char Display_distance(const struct point* p, unsigned int num)
 {
 	if (p == NULL)
@@ -267,6 +308,9 @@ double Get_distance(const struct point *a, const struct point *b)
 	return sqrt(x + y + z);
 }
 
+
+
+//optional unit test for function is_digit()
 void Test()
 {
 	unsigned char retCode;
